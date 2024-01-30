@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
@@ -49,7 +49,14 @@ def hello_world():  # put application's code here
 
 @app.route('/api')
 def api_response():
-    return jsonify(books)
+    before_year = request.args.get('before_year')
+    if not before_year:
+        return 'No year provided'
+    filtered_books = list(filter(lambda book: book['publication_year'] < int(before_year),
+                            books))
+    if len(filtered_books) == 0:
+        return 'No books'
+    return jsonify(filtered_books)
 
 
 if __name__ == '__main__':
